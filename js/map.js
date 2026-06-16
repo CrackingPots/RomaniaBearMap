@@ -131,15 +131,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).addTo(map);
             }
 
-            // 4. Load ArcGIS Ecological Network Data (Local JSON)
+            // 4. Load ArcGIS Ecological Network Data (Local JSON) & Romania Border
             try {
-                const habitatRes = await fetch('data/habitat.json');
-                
-                if (habitatRes.ok) {
+                // Fetch both the habitat data and the Romania boundary
+                const [roRes, habitatRes] = await Promise.all([
+                    fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries/ROU.geo.json'),
+                    fetch('data/habitat.json')
+                ]);
+
+                if (roRes.ok && habitatRes.ok) {
+                    const roData = await roRes.json();
+                    const romaniaPoly = roData.features[0];
                     const habitatData = await habitatRes.json();
                     
-                    // Filter features roughly to Romania's bounding box to avoid main thread freeze
-                    // Romania approx bounds: Lat 43.6 - 48.3, Lng 20.2 - 29.8
+                    // Filter features using exact point-in-polygon to avoid main thread freeze
                     const romanianFeatures = [];
                     habitatData.features.forEach(f => {
                         try {
@@ -151,10 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                             
                             if (pt && pt.length >= 2) {
-                                const lng = pt[0];
-                                const lat = pt[1];
-                                // Check if inside bounding box
-                                if (lat >= 43.6 && lat <= 48.3 && lng >= 20.2 && lng <= 29.8) {
+                                // Exact country border check (extremely fast because we only check 1 point per polygon)
+                                if (turf.booleanPointInPolygon(pt, romaniaPoly)) {
                                     romanianFeatures.push(f);
                                 }
                             }
