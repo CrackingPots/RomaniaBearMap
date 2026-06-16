@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "timestamp": "2024-05-12 21:45",
+    "county": "Prahova",
+    "city": "Sinaia",
+    "street": "Str. Furnica",
+    "lat": 45.35,
+    "lng": 25.55,
+    "text_content": "Avertizare RO-ALERT: Urs observat in Prahova, Sinaia, str. Furnica. Evitați zona!"
+  },
+  {
+    "id": 2,
+    "timestamp": "2024-05-14 08:30",
+    "county": "Brașov",
+    "city": "Bușteni",
+    "street": "Valea Albă",
+    "lat": 45.40,
+    "lng": 25.52,
+    "text_content": "Avertizare RO-ALERT: Urs cu pui pe str. Valea Albă, Bușteni."
+  }
+]
