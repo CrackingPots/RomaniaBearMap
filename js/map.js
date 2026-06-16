@@ -12,16 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let heatmapLayer = null;
     const markersLayer = L.layerGroup().addTo(map);
     
-    let isPlacingPin = false;
-    let tempMarker = null;
 
-    // DOM Elements
-    const btnAddReport = document.getElementById('btn-add-report');
-    const modal = document.getElementById('report-modal');
-    const closeBtn = document.querySelector('.close-btn');
-    const form = document.getElementById('report-form');
-    const coordsInput = document.getElementById('report-coords');
-    const btnMock = document.getElementById('btn-generate-mock'); // Button repurposed to clear local storage
 
     // Icons
     const alertIcon = L.divIcon({ html: '🚨', className: 'custom-icon', iconSize: [24, 24], iconAnchor: [12, 12] });
@@ -121,11 +112,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).addTo(map);
             }
 
-            // 4. Load ArcGIS Ecological Network Data (Local JSON to prevent timeout)
+            // 4. Load ArcGIS Ecological Network Data (Local JSON) & Romania Border
             try {
-                const habitatRes = await fetch('data/habitat.json');
-                if (habitatRes.ok) {
+                // Fetch both the habitat data and the Romania boundary
+                const [roRes, habitatRes] = await Promise.all([
+                    fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries/ROU.geo.json'),
+                    fetch('data/habitat.json')
+                ]);
+
+                if (roRes.ok && habitatRes.ok) {
+                    const roData = await roRes.json();
+                    const romaniaPoly = roData.features[0];
                     const habitatData = await habitatRes.json();
+                    
+                    // Filter features that intersect with Romania
+                    const romanianFeatures = [];
+                    habitatData.features.forEach(f => {
+                        try {
+                            if (turf.booleanIntersects(f, romaniaPoly)) {
+                                romanianFeatures.push(f);
+                            }
+                        } catch(e) {
+                            // ignore invalid geometries
+                        }
+                    });
                     
                     // Function to style based on SUBC_CODE
                     function styleEcologicalNetwork(feature) {
@@ -148,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         };
                     }
 
-                    L.geoJSON(habitatData, {
+                    L.geoJSON({type: 'FeatureCollection', features: romanianFeatures}, {
                         style: styleEcologicalNetwork,
                         onEachFeature: function (feature, layer) {
                             if (feature.properties && feature.properties.SUBC_NAME) {
@@ -172,68 +182,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial load
     loadData();
 
-    // Map Click Logic for adding reports
-    map.on('click', function(e) {
-        if (!isPlacingPin) return;
 
-        if (tempMarker) {
-            map.removeLayer(tempMarker);
-        }
-
-        const lat = e.latlng.lat;
-        const lng = e.latlng.lng;
-        
-        tempMarker = L.marker([lat, lng], {icon: reportIcon}).addTo(map);
-        
-        // Show form
-        form.classList.remove('hidden');
-        coordsInput.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-        coordsInput.dataset.lat = lat;
-        coordsInput.dataset.lng = lng;
-    });
-
-    btnAddReport.addEventListener('click', () => {
-        modal.classList.add('active');
-        isPlacingPin = true;
-        form.classList.add('hidden'); // hidden until map click
-        if(tempMarker) map.removeLayer(tempMarker);
-    });
-
-    closeBtn.addEventListener('click', () => {
-        modal.classList.remove('active');
-        isPlacingPin = false;
-        if(tempMarker) map.removeLayer(tempMarker);
-    });
-
-    // Form Submit (Save to LocalStorage)
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const payload = {
-            id: Date.now(),
-            lat: parseFloat(coordsInput.dataset.lat),
-            lng: parseFloat(coordsInput.dataset.lng),
-            observation_type: document.getElementById('report-type').value,
-            details: document.getElementById('report-details').value,
-            timestamp: new Date().toLocaleString('ro-RO')
-        };
-
-        saveLocalReport(payload);
-        
-        modal.classList.remove('active');
-        isPlacingPin = false;
-        form.reset();
-        loadData(); // refresh map
-    });
-    
-    // Update button behavior
-    if (btnMock) {
-        btnMock.textContent = 'Șterge Date Locale';
-        btnMock.addEventListener('click', () => {
-            if(confirm('Sigur doriți să ștergeți raportările salvate pe acest dispozitiv?')) {
-                localStorage.removeItem('bear_reports');
-                loadData();
-            }
-        });
-    }
 });

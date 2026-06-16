@@ -54,10 +54,7 @@
                 <div class="legend-item"><span class="legend-icon" style="background: rgba(255,0,0,0.6); border: 2px solid #ff0000; border-radius: 2px;"></span><span>Arie critică conectivitate</span></div>
             </div>
 
-            <div class="actions">
-                <button id="btn-add-report" class="btn-primary">Adaugă Observație</button>
-                <button id="btn-generate-mock" class="btn-secondary">Șterge Date Locale</button>
-            </div>
+
         </aside>
 
         <!-- Map Container -->
@@ -65,38 +62,11 @@
             <div id="map"></div>
         </main>
 
-        <!-- Modal Form (Hidden by default) -->
-        <div id="report-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <h2>Raportează prezența unui urs</h2>
-                <p class="modal-subtitle">Dă click pe hartă pentru a selecta locația.</p>
-                
-                <form id="report-form" class="hidden">
-                    <div class="form-group">
-                        <label>Coordonate selectate:</label>
-                        <input type="text" id="report-coords" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Tip observație:</label>
-                        <select id="report-type" required>
-                            <option value="urs_observat">Urs observat direct</option>
-                            <option value="urme">Urme / Excremente</option>
-                            <option value="pagube">Pagube materiale / animale</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Detalii suplimentare:</label>
-                        <textarea id="report-details" rows="3" placeholder="Ex: Câți urși, comportament, direcție..."></textarea>
-                    </div>
-                    <button type="submit" class="btn-primary w-100">Salvează Local</button>
-                </form>
-            </div>
-        </div>
     </div>
 
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
     <script src="https://unpkg.com/esri-leaflet@3.0.10/dist/esri-leaflet.js"></script>
     <!-- Leaflet.heat plugin -->
     <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
