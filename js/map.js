@@ -33,19 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Icons
     const alertIcon = L.divIcon({ html: '🚨', className: 'custom-icon', iconSize: [24, 24], iconAnchor: [12, 12] });
-    const reportIcon = L.divIcon({ html: '🐻', className: 'custom-icon', iconSize: [24, 24], iconAnchor: [12, 12] });
-
-    // Helper: Load local storage reports
-    function getLocalReports() {
-        const stored = localStorage.getItem('bear_reports');
-        return stored ? JSON.parse(stored) : [];
-    }
-
-    function saveLocalReport(report) {
-        const reports = getLocalReports();
-        reports.push(report);
-        localStorage.setItem('bear_reports', JSON.stringify(reports));
-    }
+    // Helper functions for local storage removed.
 
     // Fetch and render data
     async function loadData() {
@@ -95,29 +83,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // 2. Load User Reports from LocalStorage
-            const reports = getLocalReports();
-            document.getElementById('user-report-count').textContent = reports.length;
 
-            reports.forEach(report => {
-                const marker = L.marker([report.lat, report.lng], {icon: reportIcon});
-                marker.bindPopup(`
-                    <b style="color: #f59e0b;">🐻 Raport Utilizator (Local)</b><br>
-                    <small style="color:#94a3b8">${report.timestamp}</small><br>
-                    <strong>Tip:</strong> ${report.observation_type.replace('_', ' ')}<br>
-                    <strong>Detalii:</strong> ${report.details}
-                `);
-                markersLayer.addLayer(marker);
-            });
 
             // 3. (Heatmap base data was loaded at step 0)
             
             // Alerts are already added to heatmap in the loop above
             
-            // Adăugăm raportările utilizatorilor la zonele de risc
-            reports.forEach(report => {
-                if (report.lat && report.lng) heatData.push([report.lat, report.lng, 0.8]);
-            });
+
 
             if (heatmapLayer) {
                 map.removeLayer(heatmapLayer);
