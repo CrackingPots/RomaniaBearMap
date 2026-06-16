@@ -103,14 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).addTo(map);
             }
 
-            // 4. Load ArcGIS Ecological Network Data (Live)
+            // 4. Load ArcGIS Ecological Network Data (Live using Esri Leaflet)
             try {
-                const habitatRes = await fetch('https://services8.arcgis.com/0hQCisFJf25NtYVr/arcgis/rest/services/CG_habitat/FeatureServer/6/query?where=1%3D1&outFields=*&outSR=4326&f=geojson');
-                if (habitatRes.ok) {
-                    const habitatData = await habitatRes.json();
-                    
-                    // Function to style based on SUBC_CODE
-                    function styleEcologicalNetwork(feature) {
+                const ecologicalLayer = L.esri.featureLayer({
+                    url: 'https://services8.arcgis.com/0hQCisFJf25NtYVr/arcgis/rest/services/CG_habitat/FeatureServer/6',
+                    style: function (feature) {
                         let colorCode = '#ffffff';
                         switch(feature.properties.SUBC_CODE) {
                             case 11: colorCode = '#008000'; break; // continuous favorable
@@ -129,16 +126,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             fillOpacity: 0.4
                         };
                     }
+                }).addTo(map);
 
-                    L.geoJSON(habitatData, {
-                        style: styleEcologicalNetwork,
-                        onEachFeature: function (feature, layer) {
-                            if (feature.properties && feature.properties.SUBC_NAME) {
-                                layer.bindPopup(`<b>Rețea Ecologică Carpați</b><br>${feature.properties.SUBC_NAME}`);
-                            }
-                        }
-                    }).addTo(map);
-                }
+                ecologicalLayer.bindPopup(function (layer) {
+                    return `<b>Rețea Ecologică Carpați</b><br>${layer.feature.properties.SUBC_NAME || 'Zonă habitat'}`;
+                });
             } catch(e) {
                 console.warn("Nu s-a putut încărca layerul ArcGIS:", e);
             }
