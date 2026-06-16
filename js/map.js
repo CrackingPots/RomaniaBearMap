@@ -35,6 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
         markersLayer.clearLayers();
         
         try {
+            // 0. Load Heatmap Data first so we can push to it
+            const heatRes = await fetch('data/heatmap.json');
+            const heatData = await heatRes.json();
+
             // 1. Load RO-ALERTS from static JSON
             const alertsRes = await fetch('data/alerts.json');
             const alerts = await alertsRes.json();
@@ -89,9 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 markersLayer.addLayer(marker);
             });
 
-            // 3. Load Heatmap Data from static JSON
-            const heatRes = await fetch('data/heatmap.json');
-            const heatData = await heatRes.json();
+            // 3. (Heatmap base data was loaded at step 0)
             
             // Alerts are already added to heatmap in the loop above
             
