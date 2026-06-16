@@ -105,9 +105,27 @@ body {
 .legend-item {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.8rem;
     margin-bottom: 0.8rem;
     font-size: 0.9rem;
+}
+
+.legend-item.toggleable {
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.2s;
+}
+
+.legend-item.toggleable:hover {
+    opacity: 0.8;
+}
+
+.legend-item.toggleable input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--accent-primary);
+    margin: 0;
 }
 
 .legend-icon {

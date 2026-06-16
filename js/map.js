@@ -187,14 +187,41 @@ document.addEventListener('DOMContentLoaded', () => {
                         };
                     }
 
-                    L.geoJSON({type: 'FeatureCollection', features: romanianFeatures}, {
-                        style: styleEcologicalNetwork,
-                        onEachFeature: function (feature, layer) {
-                            if (feature.properties && feature.properties.SUBC_NAME) {
-                                layer.bindPopup(`<b>Rețea Ecologică Carpați</b><br>${feature.properties.SUBC_NAME}`);
-                            }
+                    function onEachHabitatFeature(feature, layer) {
+                        if (feature.properties && feature.properties.SUBC_NAME) {
+                            layer.bindPopup(`<b>Rețea Ecologică Carpați</b><br>${feature.properties.SUBC_NAME}`);
                         }
-                    }).addTo(map);
+                    }
+
+                    // Create separate layers for toggling
+                    const habitatLayers = {
+                        11: L.geoJSON(null, { style: styleEcologicalNetwork, onEachFeature: onEachHabitatFeature }).addTo(map),
+                        12: L.geoJSON(null, { style: styleEcologicalNetwork, onEachFeature: onEachHabitatFeature }).addTo(map),
+                        21: L.geoJSON(null, { style: styleEcologicalNetwork, onEachFeature: onEachHabitatFeature }).addTo(map),
+                        22: L.geoJSON(null, { style: styleEcologicalNetwork, onEachFeature: onEachHabitatFeature }).addTo(map),
+                        23: L.geoJSON(null, { style: styleEcologicalNetwork, onEachFeature: onEachHabitatFeature }).addTo(map),
+                        32: L.geoJSON(null, { style: styleEcologicalNetwork, onEachFeature: onEachHabitatFeature }).addTo(map),
+                        31: L.geoJSON(null, { style: styleEcologicalNetwork, onEachFeature: onEachHabitatFeature }).addTo(map)
+                    };
+
+                    romanianFeatures.forEach(f => {
+                        const code = f.properties.SUBC_CODE;
+                        if (habitatLayers[code]) {
+                            habitatLayers[code].addData(f);
+                        }
+                    });
+
+                    // Add toggle listeners
+                    document.querySelectorAll('.habitat-toggle').forEach(checkbox => {
+                        checkbox.addEventListener('change', (e) => {
+                            const code = e.target.getAttribute('data-code');
+                            if (e.target.checked) {
+                                map.addLayer(habitatLayers[code]);
+                            } else {
+                                map.removeLayer(habitatLayers[code]);
+                            }
+                        });
+                    });
                 }
             } catch(e) {
                 console.warn("Nu s-a putut încărca layerul ArcGIS local:", e);
