@@ -1,6 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Center map on Romania (approx Brasov/Prahova)
-    const map = L.map('map').setView([45.45, 25.55], 10);
+    const map = L.map('map', {
+        fullscreenControl: true,
+        fullscreenControlOptions: {
+            position: 'topleft',
+            title: 'Extinde pe tot ecranul',
+            titleCancel: 'Ieși din ecran complet'
+        }
+    }).setView([45.45, 25.55], 10);
 
     // Dark theme map tiles
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
