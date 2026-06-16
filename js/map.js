@@ -142,20 +142,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Romania approx bounds: Lat 43.6 - 48.3, Lng 20.2 - 29.8
                     const romanianFeatures = [];
                     habitatData.features.forEach(f => {
-                        let pt;
-                        if (f.geometry && f.geometry.type === 'Polygon') {
-                            pt = f.geometry.coordinates[0][0];
-                        } else if (f.geometry && f.geometry.type === 'MultiPolygon') {
-                            pt = f.geometry.coordinates[0][0][0];
-                        }
-                        
-                        if (pt && pt.length >= 2) {
-                            const lng = pt[0];
-                            const lat = pt[1];
-                            // Check if inside bounding box
-                            if (lat >= 43.6 && lat <= 48.3 && lng >= 20.2 && lng <= 29.8) {
-                                romanianFeatures.push(f);
+                        try {
+                            let pt;
+                            if (f.geometry && f.geometry.type === 'Polygon') {
+                                pt = f.geometry.coordinates[0][0];
+                            } else if (f.geometry && f.geometry.type === 'MultiPolygon') {
+                                pt = f.geometry.coordinates[0][0][0];
                             }
+                            
+                            if (pt && pt.length >= 2) {
+                                const lng = pt[0];
+                                const lat = pt[1];
+                                // Check if inside bounding box
+                                if (lat >= 43.6 && lat <= 48.3 && lng >= 20.2 && lng <= 29.8) {
+                                    romanianFeatures.push(f);
+                                }
+                            }
+                        } catch(e) {
+                            // ignore invalid geometries
                         }
                     });
                     
