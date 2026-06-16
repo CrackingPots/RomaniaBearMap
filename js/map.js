@@ -103,20 +103,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).addTo(map);
             }
 
-            // 4. Load ArcGIS Habitat Data (Live)
+            // 4. Load ArcGIS Ecological Network Data (Live)
             try {
-                const habitatRes = await fetch('https://services8.arcgis.com/0hQCisFJf25NtYVr/arcgis/rest/services/CG_habitat/FeatureServer/5/query?where=1%3D1&outFields=*&outSR=4326&f=geojson');
+                const habitatRes = await fetch('https://services8.arcgis.com/0hQCisFJf25NtYVr/arcgis/rest/services/CG_habitat/FeatureServer/6/query?where=1%3D1&outFields=*&outSR=4326&f=geojson');
                 if (habitatRes.ok) {
                     const habitatData = await habitatRes.json();
-                    L.geoJSON(habitatData, {
-                        style: {
-                            color: '#ff7800',
-                            weight: 2,
-                            opacity: 0.8,
-                            fillColor: '#ff7800',
-                            fillOpacity: 0.15
+                    
+                    // Function to style based on SUBC_CODE
+                    function styleEcologicalNetwork(feature) {
+                        let colorCode = '#ffffff';
+                        switch(feature.properties.SUBC_CODE) {
+                            case 11: colorCode = '#008000'; break; // continuous favorable
+                            case 12: colorCode = '#00d600'; break; // other suitable
+                            case 21: colorCode = '#0070ff'; break; // linkage area
+                            case 22: colorCode = '#00a9e6'; break; // corridor
+                            case 23: colorCode = '#002691'; break; // stepping stone
+                            case 32: colorCode = '#ffaa00'; break; // critical connectivity sector
+                            case 31: colorCode = '#ff0000'; break; // critical connectivity area
                         }
-                    }).bindPopup("<b>Habitat Natural (ArcGIS)</b>").addTo(map);
+                        return {
+                            color: colorCode,
+                            weight: 1.5,
+                            opacity: 0.8,
+                            fillColor: colorCode,
+                            fillOpacity: 0.4
+                        };
+                    }
+
+                    L.geoJSON(habitatData, {
+                        style: styleEcologicalNetwork,
+                        onEachFeature: function (feature, layer) {
+                            if (feature.properties && feature.properties.SUBC_NAME) {
+                                layer.bindPopup(`<b>Rețea Ecologică Carpați</b><br>${feature.properties.SUBC_NAME}`);
+                            }
+                        }
+                    }).addTo(map);
                 }
             } catch(e) {
                 console.warn("Nu s-a putut încărca layerul ArcGIS:", e);
