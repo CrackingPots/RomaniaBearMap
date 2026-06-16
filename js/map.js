@@ -102,6 +102,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     gradient: {0.4: 'blue', 0.6: 'lime', 0.8: 'yellow', 1.0: 'red'}
                 }).addTo(map);
             }
+
+            // 4. Load ArcGIS Habitat Data (Live)
+            try {
+                const habitatRes = await fetch('https://services8.arcgis.com/0hQCisFJf25NtYVr/arcgis/rest/services/CG_habitat/FeatureServer/5/query?where=1%3D1&outFields=*&outSR=4326&f=geojson');
+                if (habitatRes.ok) {
+                    const habitatData = await habitatRes.json();
+                    L.geoJSON(habitatData, {
+                        style: {
+                            color: '#ff7800',
+                            weight: 2,
+                            opacity: 0.8,
+                            fillColor: '#ff7800',
+                            fillOpacity: 0.15
+                        }
+                    }).bindPopup("<b>Habitat Natural (ArcGIS)</b>").addTo(map);
+                }
+            } catch(e) {
+                console.warn("Nu s-a putut încărca layerul ArcGIS:", e);
+            }
         } catch (error) {
             console.error('Error loading data:', error);
             // If opening from file:// protocol, fetch might fail due to CORS.
