@@ -247,6 +247,37 @@ input:focus, select:focus, textarea:focus {
 .leaflet-popup-content b { color: var(--accent-primary); display: block; margin-bottom: 5px; font-size: 1.05rem;}
 .custom-icon { font-size: 24px; text-align: center; line-height: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
 
+/* Custom Fullscreen Mode */
+body.fullscreen-mode .sidebar {
+    display: none !important;
+}
+body.fullscreen-mode .map-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 9999;
+}
+
+.leaflet-control-custom-fs {
+    background-color: #fff;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    font-size: 18px;
+    color: #333;
+    transition: background-color 0.2s ease;
+}
+
+.leaflet-control-custom-fs:hover {
+    background-color: #f4f4f4;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .app-container { flex-direction: column; }

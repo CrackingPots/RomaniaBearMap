@@ -1,12 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const map = L.map('map', {
-        fullscreenControl: true,
-        fullscreenControlOptions: {
-            position: 'topleft',
-            title: 'Extinde pe tot ecranul',
-            titleCancel: 'Ieși din ecran complet'
+    const map = L.map('map').setView([45.45, 25.55], 10);
+
+    // Custom Fullscreen Control for Mobile (Fake Fullscreen)
+    L.Control.CustomFullscreen = L.Control.extend({
+        onAdd: function(map) {
+            const btn = L.DomUtil.create('div', 'leaflet-control-custom-fs leaflet-bar');
+            btn.innerHTML = '⛶';
+            btn.title = 'Ecran Complet';
+            
+            L.DomEvent.on(btn, 'click', function(e) {
+                L.DomEvent.stopPropagation(e);
+                document.body.classList.toggle('fullscreen-mode');
+                // Leaflet needs to know the container size changed
+                setTimeout(() => { map.invalidateSize(); }, 300);
+            });
+            return btn;
         }
-    }).setView([45.45, 25.55], 10);
+    });
+    new L.Control.CustomFullscreen({ position: 'topleft' }).addTo(map);
 
     // Dark theme map tiles
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
@@ -131,17 +142,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Romania approx bounds: Lat 43.6 - 48.3, Lng 20.2 - 29.8
                     const romanianFeatures = [];
                     habitatData.features.forEach(f => {
-                        // We check the first coordinate of the first polygon ring
-                        let coords = f.geometry.coordinates;
-                        if (f.geometry.type === 'Polygon') {
-                            coords = coords[0][0];
-                        } else if (f.geometry.type === 'MultiPolygon') {
-                            coords = coords[0][0][0];
+                        let pt;
+                        if (f.geometry && f.geometry.type === 'Polygon') {
+                            pt = f.geometry.coordinates[0][0];
+                        } else if (f.geometry && f.geometry.type === 'MultiPolygon') {
+                            pt = f.geometry.coordinates[0][0][0];
                         }
                         
-                        if (coords && coords.length >= 2) {
-                            const lng = coords[0];
-                            const lat = coords[1];
+                        if (pt && pt.length >= 2) {
+                            const lng = pt[0];
+                            const lat = pt[1];
                             // Check if inside bounding box
                             if (lat >= 43.6 && lat <= 48.3 && lng >= 20.2 && lng <= 29.8) {
                                 romanianFeatures.push(f);
