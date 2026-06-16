@@ -1,22 +1,86 @@
 [
   {
     "id": 1,
-    "timestamp": "2024-05-12 21:45",
+    "timestamp": "16-Mai-2024 21:45",
+    "source": "RO-ALERT",
+    "icon": "🚨",
     "county": "Prahova",
     "city": "Sinaia",
     "street": "Str. Furnica",
     "lat": 45.35,
     "lng": 25.55,
-    "text_content": "Avertizare RO-ALERT: Urs observat in Prahova, Sinaia, str. Furnica. Evitați zona!"
+    "text_content": "Urs observat pe Str. Furnica. Evitați zona!"
   },
   {
     "id": 2,
-    "timestamp": "2024-05-14 08:30",
+    "timestamp": "16-Mai-2024 08:30",
+    "source": "RO-ALERT",
+    "icon": "🚨",
     "county": "Brașov",
     "city": "Bușteni",
     "street": "Valea Albă",
     "lat": 45.40,
     "lng": 25.52,
-    "text_content": "Avertizare RO-ALERT: Urs cu pui pe str. Valea Albă, Bușteni."
+    "text_content": "Urs cu pui semnalat pe strada Valea Albă. Rămâneți în locuințe."
+  },
+  {
+    "id": 3,
+    "timestamp": "15-Mai-2024 14:20",
+    "source": "Știri Naționale",
+    "icon": "📰",
+    "county": "Argeș",
+    "city": "Transfăgărășan",
+    "street": "DN7C, baraj Vidraru",
+    "lat": 45.36,
+    "lng": 24.63,
+    "text_content": "Turiști fotografiază un urs aflat la marginea drumului, traficul este blocat pe ambele sensuri."
+  },
+  {
+    "id": 4,
+    "timestamp": "15-Mai-2024 16:10",
+    "source": "Raportare Waze",
+    "icon": "🚗",
+    "county": "Covasna",
+    "city": "Băile Tușnad",
+    "street": "DN12",
+    "lat": 46.14,
+    "lng": 25.86,
+    "text_content": "Hazard on road: Animal pe carosabil (Urs)."
+  },
+  {
+    "id": 5,
+    "timestamp": "14-Mai-2024 09:00",
+    "source": "Grup Facebook Turism",
+    "icon": "📱",
+    "county": "Harghita",
+    "city": "Lacul Sfânta Ana",
+    "street": "Poteca turistică",
+    "lat": 46.12,
+    "lng": 25.88,
+    "text_content": "Atenție colegi de drumeție, am zărit un exemplar mare aproape de lac. Nu lăsați mâncare pe traseu!"
+  },
+  {
+    "id": 6,
+    "timestamp": "14-Mai-2024 11:30",
+    "source": "Jandarmeria Montană",
+    "icon": "🚓",
+    "county": "Brașov",
+    "city": "Predeal",
+    "street": "Cabana Trei Brazi",
+    "lat": 45.49,
+    "lng": 25.55,
+    "text_content": "Intervenție pentru îndepărtarea unui urs care căuta prin pubelele de gunoi ale cabanei. Animalul a fost relocat."
+  },
+  {
+    "id": 7,
+    "timestamp": "13-Mai-2024 20:15",
+    "source": "RO-ALERT",
+    "icon": "🚨",
+    "county": "Mureș",
+    "city": "Sovata",
+    "street": "Lacul Ursu",
+    "lat": 46.60,
+    "lng": 25.08,
+    "text_content": "Urs semnalat în apropierea bazei de tratament. Evitați plimbările de seară în liziera pădurii."
   }
 ]

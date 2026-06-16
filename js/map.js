@@ -50,9 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('ro-alert-count').textContent = alerts.length;
             
             alerts.forEach(alert => {
-                const marker = L.marker([alert.lat, alert.lng], {icon: alertIcon});
+                const customIcon = L.divIcon({ html: alert.icon || '🚨', className: 'custom-icon', iconSize: [24, 24], iconAnchor: [12, 12] });
+                const marker = L.marker([alert.lat, alert.lng], {icon: customIcon});
                 marker.bindPopup(`
-                    <b>🚨 RO-ALERT</b><br>
+                    <b style="color: #ef4444;">${alert.icon || '🚨'} ${alert.source || 'RO-ALERT'}</b><br>
                     <small style="color:#94a3b8">${alert.timestamp}</small><br>
                     ${alert.county ? alert.county + ',' : ''} ${alert.city || ''} ${alert.street || ''}<br>
                     <i style="opacity: 0.8; margin-top: 8px; display: inline-block;">"${alert.text_content}"</i>
@@ -79,6 +80,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const heatRes = await fetch('data/heatmap.json');
             const heatData = await heatRes.json();
             
+            // --- NOU: Adăugăm dinamic la Heatmap ---
+            // Adăugăm alertele RO-ALERT la zonele de risc
+            alerts.forEach(alert => {
+                if (alert.lat && alert.lng) heatData.push([alert.lat, alert.lng, 1.0]);
+            });
+            
+            // Adăugăm raportările utilizatorilor la zonele de risc
+            reports.forEach(report => {
+                if (report.lat && report.lng) heatData.push([report.lat, report.lng, 0.8]);
+            });
+
             if (heatmapLayer) {
                 map.removeLayer(heatmapLayer);
             }
