@@ -49,16 +49,38 @@ document.addEventListener('DOMContentLoaded', () => {
             const alerts = await alertsRes.json();
             document.getElementById('ro-alert-count').textContent = alerts.length;
             
+            // Date parser helper for Romanian format: "16-Mai-2024 21:45"
+            function parseRomanianDate(dateStr) {
+                const months = { "Ian":0, "Feb":1, "Mar":2, "Apr":3, "Mai":4, "Iun":5, "Iul":6, "Aug":7, "Sep":8, "Oct":9, "Nov":10, "Dec":11 };
+                const parts = dateStr.split(/[- :]/);
+                if (parts.length >= 5) {
+                    return new Date(parseInt(parts[2], 10), months[parts[1]], parseInt(parts[0], 10), parseInt(parts[3], 10), parseInt(parts[4], 10));
+                }
+                return new Date(); // fallback
+            }
+
+            const now = new Date();
+            const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
+
             alerts.forEach(alert => {
-                const customIcon = L.divIcon({ html: alert.icon || '🚨', className: 'custom-icon', iconSize: [24, 24], iconAnchor: [12, 12] });
-                const marker = L.marker([alert.lat, alert.lng], {icon: customIcon});
-                marker.bindPopup(`
-                    <b style="color: #ef4444;">${alert.icon || '🚨'} ${alert.source || 'RO-ALERT'}</b><br>
-                    <small style="color:#94a3b8">${alert.timestamp}</small><br>
-                    ${alert.county ? alert.county + ',' : ''} ${alert.city || ''} ${alert.street || ''}<br>
-                    <i style="opacity: 0.8; margin-top: 8px; display: inline-block;">"${alert.text_content}"</i>
-                `);
-                markersLayer.addLayer(marker);
+                // Add to heatmap unconditionally
+                if (alert.lat && alert.lng) heatData.push([alert.lat, alert.lng, 1.0]);
+
+                // Check age for icon
+                const alertDate = parseRomanianDate(alert.timestamp);
+                const ageMs = now - alertDate;
+
+                if (ageMs <= oneWeekMs) {
+                    const customIcon = L.divIcon({ html: alert.icon || '🚨', className: 'custom-icon', iconSize: [24, 24], iconAnchor: [12, 12] });
+                    const marker = L.marker([alert.lat, alert.lng], {icon: customIcon});
+                    marker.bindPopup(`
+                        <b style="color: #ef4444;">${alert.icon || '🚨'} ${alert.source || 'RO-ALERT'}</b><br>
+                        <small style="color:#94a3b8">${alert.timestamp}</small><br>
+                        ${alert.county ? alert.county + ',' : ''} ${alert.city || ''} ${alert.street || ''}<br>
+                        <i style="opacity: 0.8; margin-top: 8px; display: inline-block;">"${alert.text_content}"</i>
+                    `);
+                    markersLayer.addLayer(marker);
+                }
             });
 
             // 2. Load User Reports from LocalStorage
@@ -80,11 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const heatRes = await fetch('data/heatmap.json');
             const heatData = await heatRes.json();
             
-            // --- NOU: Adăugăm dinamic la Heatmap ---
-            // Adăugăm alertele RO-ALERT la zonele de risc
-            alerts.forEach(alert => {
-                if (alert.lat && alert.lng) heatData.push([alert.lat, alert.lng, 1.0]);
-            });
+            // Alerts are already added to heatmap in the loop above
             
             // Adăugăm raportările utilizatorilor la zonele de risc
             reports.forEach(report => {
@@ -103,11 +121,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).addTo(map);
             }
 
-            // 4. Load ArcGIS Ecological Network Data (Live using Esri Leaflet)
+            // 4. Load ArcGIS Ecological Network Data (Local JSON to prevent timeout)
             try {
-                const ecologicalLayer = L.esri.featureLayer({
-                    url: 'https://services8.arcgis.com/0hQCisFJf25NtYVr/arcgis/rest/services/CG_habitat/FeatureServer/6',
-                    style: function (feature) {
+                const habitatRes = await fetch('data/habitat.json');
+                if (habitatRes.ok) {
+                    const habitatData = await habitatRes.json();
+                    
+                    // Function to style based on SUBC_CODE
+                    function styleEcologicalNetwork(feature) {
                         let colorCode = '#ffffff';
                         switch(feature.properties.SUBC_CODE) {
                             case 11: colorCode = '#008000'; break; // continuous favorable
@@ -126,13 +147,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             fillOpacity: 0.4
                         };
                     }
-                }).addTo(map);
 
-                ecologicalLayer.bindPopup(function (layer) {
-                    return `<b>Rețea Ecologică Carpați</b><br>${layer.feature.properties.SUBC_NAME || 'Zonă habitat'}`;
-                });
+                    L.geoJSON(habitatData, {
+                        style: styleEcologicalNetwork,
+                        onEachFeature: function (feature, layer) {
+                            if (feature.properties && feature.properties.SUBC_NAME) {
+                                layer.bindPopup(`<b>Rețea Ecologică Carpați</b><br>${feature.properties.SUBC_NAME}`);
+                            }
+                        }
+                    }).addTo(map);
+                }
             } catch(e) {
-                console.warn("Nu s-a putut încărca layerul ArcGIS:", e);
+                console.warn("Nu s-a putut încărca layerul ArcGIS local:", e);
             }
         } catch (error) {
             console.error('Error loading data:', error);

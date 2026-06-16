@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "timestamp": "16-Mai-2024 21:45",
+    "timestamp": "16-Iun-2026 21:45",
     "source": "RO-ALERT",
     "icon": "🚨",
     "county": "Prahova",
@@ -13,7 +13,7 @@
   },
   {
     "id": 2,
-    "timestamp": "16-Mai-2024 08:30",
+    "timestamp": "15-Iun-2026 08:30",
     "source": "RO-ALERT",
     "icon": "🚨",
     "county": "Brașov",
@@ -25,7 +25,7 @@
   },
   {
     "id": 3,
-    "timestamp": "15-Mai-2024 14:20",
+    "timestamp": "14-Iun-2026 14:20",
     "source": "Știri Naționale",
     "icon": "📰",
     "county": "Argeș",
@@ -37,7 +37,7 @@
   },
   {
     "id": 4,
-    "timestamp": "15-Mai-2024 16:10",
+    "timestamp": "12-Iun-2026 16:10",
     "source": "Raportare Waze",
     "icon": "🚗",
     "county": "Covasna",
@@ -49,7 +49,7 @@
   },
   {
     "id": 5,
-    "timestamp": "14-Mai-2024 09:00",
+    "timestamp": "05-Iun-2026 09:00",
     "source": "Grup Facebook Turism",
     "icon": "📱",
     "county": "Harghita",
@@ -57,11 +57,11 @@
     "street": "Poteca turistică",
     "lat": 46.12,
     "lng": 25.88,
-    "text_content": "Atenție colegi de drumeție, am zărit un exemplar mare aproape de lac. Nu lăsați mâncare pe traseu!"
+    "text_content": "Acest mesaj e mai vechi de o săptămână! Vezi că apare doar în heatmap, dar pin-ul a expirat."
   },
   {
     "id": 6,
-    "timestamp": "14-Mai-2024 11:30",
+    "timestamp": "02-Iun-2026 11:30",
     "source": "Jandarmeria Montană",
     "icon": "🚓",
     "county": "Brașov",
@@ -69,11 +69,11 @@
     "street": "Cabana Trei Brazi",
     "lat": 45.49,
     "lng": 25.55,
-    "text_content": "Intervenție pentru îndepărtarea unui urs care căuta prin pubelele de gunoi ale cabanei. Animalul a fost relocat."
+    "text_content": "Aleră veche: Intervenție pentru îndepărtarea unui urs care căuta prin pubele. Animalul a fost relocat."
   },
   {
     "id": 7,
-    "timestamp": "13-Mai-2024 20:15",
+    "timestamp": "01-Iun-2026 20:15",
     "source": "RO-ALERT",
     "icon": "🚨",
     "county": "Mureș",
@@ -81,6 +81,6 @@
     "street": "Lacul Ursu",
     "lat": 46.60,
     "lng": 25.08,
-    "text_content": "Urs semnalat în apropierea bazei de tratament. Evitați plimbările de seară în liziera pădurii."
+    "text_content": "Alertă veche! Urs semnalat în apropierea bazei de tratament."
   }
 ]
